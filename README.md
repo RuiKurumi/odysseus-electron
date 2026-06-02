@@ -282,6 +282,15 @@ All user data lives in `data/` (gitignored): `app.db` (sessions, messages, docum
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=pewdiepie-archdaemon/odysseus&type=date&legend=top-left" />
  </picture>
 </a>
+# Electron Installation
+- On your odysseus installation:
+`cd electron` and run `npm i`
+- During setup, the electron app looks if you have venv already set up;
+ - if it does, continue from there
+ - if it doesn't, create venv
+
+- run `npm start` to build the electron runtime.
+
 
 ## License
 MIT -- see [LICENSE](LICENSE) and [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
