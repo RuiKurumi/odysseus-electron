@@ -1,0 +1,84 @@
+{
+  "name": "odysseus-desktop",
+  "version": "1.0.0",
+  "description": "Odysseus — Self-hosted AI workspace (Windows desktop app)",
+  "main": "main.js",
+  "author": "Odysseus Contributors",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "build:win": "electron-builder --win",
+    "build:all": "electron-builder -mwl"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.0"
+  },
+  "build": {
+    "appId": "com.odysseus.desktop",
+    "productName": "Odysseus",
+    "copyright": "MIT License",
+
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+
+    "files": [
+      "main.js",
+      "loading.html",
+      "assets/**/*",
+      "!assets/odysseus/**"
+    ],
+
+    "extraResources": [
+      {
+        "from": "..",
+        "to": "odysseus",
+        "filter": [
+          "**/*",
+          "!electron/**",
+          "!.git/**",
+          "!venv/**",
+          "!data/**",
+          "!__pycache__/**",
+          "!**/*.pyc",
+          "!node_modules/**",
+          "!dist/**",
+          "!.env",
+          "!*.log"
+        ]
+      }
+    ],
+
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "Odysseus-Setup-${version}.exe"
+    },
+
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Odysseus",
+      "deleteAppDataOnUninstall": false,
+      "include": "installer/nsis-extra.nsh"
+    },
+
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    }
+  }
+}

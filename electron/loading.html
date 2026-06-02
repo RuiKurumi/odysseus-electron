@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Odysseus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: transparent;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-app-region: drag;
+    user-select: none;
+  }
+
+  .card {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    padding: 40px 48px;
+    width: 440px;
+    text-align: center;
+    box-shadow: 0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  .logo {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #1f6feb, #388bfd);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #e6edf3;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #7d8590;
+    margin-bottom: 32px;
+  }
+
+  .status-text {
+    font-size: 13px;
+    color: #8b949e;
+    margin-bottom: 14px;
+    min-height: 18px;
+    transition: opacity 0.2s;
+  }
+
+  .progress-track {
+    background: #161b22;
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1f6feb, #388bfd);
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  .progress-fill.indeterminate {
+    width: 40% !important;
+    animation: slide 1.4s ease-in-out infinite;
+  }
+
+  @keyframes slide {
+    0%   { transform: translateX(-150%); }
+    50%  { transform: translateX(200%); }
+    100% { transform: translateX(200%); }
+  }
+
+  .quit-btn {
+    background: none;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #7d8590;
+    font-size: 12px;
+    padding: 6px 16px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .quit-btn:hover {
+    border-color: #6e7681;
+    color: #c9d1d9;
+  }
+
+  /* First-run badge */
+  .setup-badge {
+    display: none;
+    background: #0c2d6b;
+    border: 1px solid #1f6feb;
+    border-radius: 6px;
+    color: #79c0ff;
+    font-size: 12px;
+    padding: 8px 14px;
+    margin-bottom: 20px;
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .setup-badge.visible {
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.5C16.5 22.15 20 17.25 20 12V6l-8-4z" fill="white" fill-opacity="0.9"/>
+    </svg>
+  </div>
+  <h1>Odysseus</h1>
+  <p class="subtitle">Self-hosted AI workspace</p>
+
+  <div class="setup-badge" id="setup-badge">
+    ⚙ First-time setup — installing dependencies.<br>
+    This only runs once and may take a few minutes.
+  </div>
+
+  <div class="status-text" id="status-text">Initializing…</div>
+
+  <div class="progress-track">
+    <div class="progress-fill indeterminate" id="progress-fill"></div>
+  </div>
+
+  <button class="quit-btn" id="quit-btn">Cancel</button>
+</div>
+
+<script>
+const { ipcRenderer } = require('electron');
+
+const statusEl = document.getElementById('status-text');
+const progressEl = document.getElementById('progress-fill');
+const setupBadge = document.getElementById('setup-badge');
+const quitBtn = document.getElementById('quit-btn');
+
+quitBtn.addEventListener('click', () => ipcRenderer.send('quit'));
+
+ipcRenderer.on('status', (_, { message, progress }) => {
+  statusEl.textContent = message;
+
+  const isSetup = message.toLowerCase().includes('install') ||
+                  message.toLowerCase().includes('venv') ||
+                  message.toLowerCase().includes('setup') ||
+                  message.toLowerCase().includes('environment');
+  if (isSetup) setupBadge.classList.add('visible');
+
+  if (progress < 0) {
+    progressEl.style.width = '';
+    progressEl.classList.add('indeterminate');
+  } else {
+    progressEl.classList.remove('indeterminate');
+    progressEl.style.width = progress + '%';
+  }
+});
+</script>
+</body>
+</html>
