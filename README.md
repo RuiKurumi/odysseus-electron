@@ -283,8 +283,11 @@ All user data lives in `data/` (gitignored): `app.db` (sessions, messages, docum
  </picture>
 </a>
 # Electron Installation
+
 - On your odysseus installation:
+
 `cd electron` and run `npm i`
+
 - During setup, the electron app looks if you have venv already set up;
  - if it does, continue from there
  - if it doesn't, create venv
